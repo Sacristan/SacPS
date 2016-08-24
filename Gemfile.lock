@@ -42,6 +42,8 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-nav (0.2.4)
+      pry (>= 0.9.10, < 0.11.0)
     rake (10.1.1)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -78,10 +80,11 @@ DEPENDENCIES
   dotenv
   priscilla
   pry
+  pry-nav
   rake
   rspec
   sacps!
   timecop
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

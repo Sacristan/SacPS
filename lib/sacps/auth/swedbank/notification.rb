@@ -4,7 +4,7 @@ module SacPS
       class Notification
         include SacPS::Auth::Common
         include SacPS::Auth::Banklink
-        
+
         attr_accessor :params
         attr_accessor :raw
         attr_accessor :signature
@@ -44,8 +44,7 @@ module SacPS
         end
 
         def valid?
-          true
-          # bank_signature_valid?(params['VK_SERVICE'], params)
+          bank_signature_valid?(params['VK_SERVICE'], params)
         end
 
         private
@@ -61,7 +60,7 @@ module SacPS
           def bank_signature_valid? service_msg_number, sigparams
             digest = OpenSSL::Digest::SHA1.new
             data_string = generate_data_string(service_msg_number, sigparams, SacPS::Auth::Swedbank.required_service_params)
-            SacPS::Auth::Swedbank.get_public_key.verify digest, signature, data_string
+            SacPS::Auth::Swedbank.get_bank_public_key.verify digest, signature, data_string
           end
       end
     end

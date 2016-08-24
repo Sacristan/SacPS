@@ -1,7 +1,9 @@
 require 'bundler/setup'
 Bundler.setup
 
+$LOAD_PATH << File.expand_path("spec/mocks")
 require 'sacps'
+require 'mock'
 require 'priscilla'
 require 'timecop'
 require 'pry'

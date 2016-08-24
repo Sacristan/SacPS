@@ -5,8 +5,12 @@ require 'spec_helper'
 describe SacPS::Auth::Swedbank::Notification do
   context "validation" do
     before :all do
-      valid_http_raw_data =   "VK_SERVICE=3003&VK_VERSION=008&VK_SND_ID=HP&VK_REC_ID=REFEREND&VK_NONCE=48064728456631139890576881998733355098303532232665&VK_INFO=ISIK:160992-10610;NIMI:KRISTIĀNS PURVIŅŠ&VK_ENCODING=UTF-8&VK_MAC=BdTGaM90+aSDAVDfHFooTFEUlkdqxCWpr+Vxn6SkKj27mJyllqQP9Hxqw+PfYUhUUsDbqHIUN95qPl9t9aabn+caIbdcMq6aHbqNBoc7svhlNv0qBse8NaNIp7xnwjPVDzZA4ExyBvlRMGmrsSNbjc2P9SkdSWDfxgwb3GEPkoE="
+      Mock::Auth::Swedbank.public_key = File.read(File.expand_path("spec/example_files/swedbank_test_cert.pem"))
+      Mock::Auth::Swedbank.private_key = File.read(File.expand_path("spec/example_files/swedbank_test_key.pem"))
+      valid_http_raw_data = Mock::Auth::Swedbank::NotificationGenerator.new.generate_raw_response
       invalid_http_raw_data = "VK_SERVICE=3003&VK_VERSION=008&VK_SND_ID=HP&VK_REC_ID=REFEREND&VK_NONCE=63244166086213189956175700685245263586579875921384&VK_INFO=ISIK:123456-10312;NIMI:MĀRIS CUKURS&VK_ENCODING=UTF-8&VK_MAC=S+Gt91E1I9WEL/qIWOgOUJB0h4WDeBHrfETqC4UG9Xe58YOP30iIRoMJOlBSHvfswVWEuSwCbBVsWIQt7tqHsY1IbidEsJ2ffdkCgofO9qPDBTuS9CI3bbPhK3gMtxkFs5BzxmXEu4bJHvuVJF40g4HyFZe3ozrUem2BHQS6u0Y="
+
+      SacPS::Auth::Swedbank.bank_public_key = File.read(File.expand_path("spec/example_files/swedbank_test_cert.pem"))
       @invalid_http_raw_data = SacPS::Auth::Swedbank.notification invalid_http_raw_data
       @valid_notification = SacPS::Auth::Swedbank.notification valid_http_raw_data
     end
@@ -43,4 +47,19 @@ describe SacPS::Auth::Swedbank::Notification do
     end
   end
 
+  private
+
+  # swedbank responds to our authentication request with an encrypted notification,
+  # that is encrypted the same way our authentication request is.
+  # To test this we pretend to be the bank and use a self key pair to sign
+  # and verify the notification
+  # the keys used for test purpases are in spec/expample_files and can be generated
+  # by calling
+  # openssl req  -nodes -new -x509 -keyout swedbank_test_key.pem -out swedbank_test_cert.pem -days 3650
+  def generate_notification
+    service_msg_number =
+    sigparams =
+    requried_service_params =
+    SacPS::Auth::Banklink.generate_signature(service_msg_number, sigparams, required_service_params)
+  end
 end

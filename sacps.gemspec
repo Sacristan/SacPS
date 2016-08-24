@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "dotenv"
   s.add_development_dependency "timecop"
   s.add_development_dependency "pry"
+  s.add_development_dependency "pry-nav"
 
   s.add_dependency 'activesupport'
   s.add_dependency "builder", '>= 2.0'

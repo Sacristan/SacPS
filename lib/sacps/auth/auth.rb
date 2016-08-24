@@ -16,11 +16,12 @@ module SacPS
       def generate_data_string(service_msg_number, sigparams, required_service_params)
         str = ''
         required_params = required_service_params[service_msg_number.to_i] || required_service_params[service_msg_number]
-        
+
         required_params.each do |param|
           val = sigparams[param].to_s # nil goes to ''
           str << func_p(val) << val
         end
+        #binding.pry
         str
       end
 
@@ -31,7 +32,7 @@ module SacPS
       # Take the posted data and move the relevant data into a hash
       def parse(post)
         @raw = post.to_s
-        
+
         for line in @raw.split('&')
           key, value = *line.scan( %r{^([A-Za-z0-9_.]+)\=(.*)$} ).flatten
           params[key] = CGI.unescape(value)
